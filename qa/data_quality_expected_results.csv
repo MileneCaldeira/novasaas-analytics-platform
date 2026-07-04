@@ -1,0 +1,10 @@
+check_name,result,logic,expected
+Duplicated customer document,0,COUNT document > 1,Should be 0
+Customer without subscription,0,dim_customer left anti fact_subscription,Should be 0
+Subscription with invalid plan,0,plan_id not in dim_plan,Should be 0
+Payment with invalid subscription,0,subscription_id not in fact_subscription,Should be 0
+Negative payment amount,0,amount < 0,Should be 0
+Paid payment without paid_at,0,status Paid and paid_at blank,Should be 0
+Cancel date before start date,0,cancel_date < start_date,Should be 0
+Usage with invalid customer,0,usage customer_id not in dim_customer,Should be 0
+Latest billing month,2025-12-01,MAX fact_payment[billing_month],Should match latest month in slicer
