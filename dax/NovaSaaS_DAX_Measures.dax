@@ -1,0 +1,244 @@
+-- NovaSaaS BI | Customer & Revenue Analytics
+-- Medidas para montar o dashboard no Power BI
+-- Convenção de modelo:
+-- dim_date[date] -> fact_payment[billing_month]
+-- dim_date[date] -> fact_usage[usage_month]
+-- dim_customer[customer_id] -> fact_subscription/fact_payment/fact_usage/fact_event
+-- dim_plan[plan_id] -> fact_subscription[plan_id]
+-- dim_region[region_id] -> dim_customer[region_id]
+
+-- =========================
+-- Datas auxiliares
+-- =========================
+
+Selected Month End =
+EOMONTH ( MAX ( 'dim_date'[date] ), 0 )
+
+Previous Month End =
+EOMONTH ( [Selected Month End], -1 )
+
+Selected Month Start =
+DATE ( YEAR ( [Selected Month End] ), MONTH ( [Selected Month End] ), 1 )
+
+Previous Month Start =
+DATE ( YEAR ( [Previous Month End] ), MONTH ( [Previous Month End] ), 1 )
+
+
+-- =========================
+-- Receita / Pagamentos
+-- =========================
+
+Revenue Received =
+CALCULATE (
+    SUM ( 'fact_payment'[amount] ),
+    'fact_payment'[payment_status] = "Paid"
+)
+
+Revenue Open =
+CALCULATE (
+    SUM ( 'fact_payment'[amount] ),
+    'fact_payment'[payment_status] = "Open"
+)
+
+Revenue Failed =
+CALCULATE (
+    SUM ( 'fact_payment'[amount] ),
+    'fact_payment'[payment_status] = "Failed"
+)
+
+Payments Paid =
+CALCULATE (
+    COUNTROWS ( 'fact_payment' ),
+    'fact_payment'[payment_status] = "Paid"
+)
+
+Payments Open =
+CALCULATE (
+    COUNTROWS ( 'fact_payment' ),
+    'fact_payment'[payment_status] = "Open"
+)
+
+Payments Failed =
+CALCULATE (
+    COUNTROWS ( 'fact_payment' ),
+    'fact_payment'[payment_status] = "Failed"
+)
+
+Average Ticket =
+DIVIDE ( [Revenue Received], [Payments Paid] )
+
+
+-- =========================
+-- MRR / ARR / Clientes ativos
+-- =========================
+
+MRR Current =
+VAR MonthEnd = [Selected Month End]
+RETURN
+SUMX (
+    FILTER (
+        'fact_subscription',
+        'fact_subscription'[start_date] <= MonthEnd
+            && (
+                ISBLANK ( 'fact_subscription'[cancel_date] )
+                || 'fact_subscription'[cancel_date] > MonthEnd
+            )
+    ),
+    'fact_subscription'[net_monthly_price]
+)
+
+MRR Previous Month =
+VAR MonthEnd = [Previous Month End]
+RETURN
+SUMX (
+    FILTER (
+        'fact_subscription',
+        'fact_subscription'[start_date] <= MonthEnd
+            && (
+                ISBLANK ( 'fact_subscription'[cancel_date] )
+                || 'fact_subscription'[cancel_date] > MonthEnd
+            )
+    ),
+    'fact_subscription'[net_monthly_price]
+)
+
+MRR MoM % =
+DIVIDE ( [MRR Current] - [MRR Previous Month], [MRR Previous Month] )
+
+ARR Run Rate =
+[MRR Current] * 12
+
+Active Customers =
+VAR MonthEnd = [Selected Month End]
+RETURN
+COUNTROWS (
+    FILTER (
+        'fact_subscription',
+        'fact_subscription'[start_date] <= MonthEnd
+            && (
+                ISBLANK ( 'fact_subscription'[cancel_date] )
+                || 'fact_subscription'[cancel_date] > MonthEnd
+            )
+    )
+)
+
+Active Customers Previous Month =
+VAR MonthEnd = [Previous Month End]
+RETURN
+COUNTROWS (
+    FILTER (
+        'fact_subscription',
+        'fact_subscription'[start_date] <= MonthEnd
+            && (
+                ISBLANK ( 'fact_subscription'[cancel_date] )
+                || 'fact_subscription'[cancel_date] > MonthEnd
+            )
+    )
+)
+
+Active Customers MoM % =
+DIVIDE ( [Active Customers] - [Active Customers Previous Month], [Active Customers Previous Month] )
+
+ARPU =
+DIVIDE ( [MRR Current], [Active Customers] )
+
+
+-- =========================
+-- Churn / Retenção
+-- =========================
+
+Cancelled Customers Current Month =
+VAR MonthStart = [Selected Month Start]
+VAR MonthEnd = [Selected Month End]
+RETURN
+COUNTROWS (
+    FILTER (
+        'fact_subscription',
+        NOT ISBLANK ( 'fact_subscription'[cancel_date] )
+            && 'fact_subscription'[cancel_date] >= MonthStart
+            && 'fact_subscription'[cancel_date] <= MonthEnd
+    )
+)
+
+Monthly Churn Rate =
+DIVIDE ( [Cancelled Customers Current Month], [Active Customers Previous Month] )
+
+Retention Rate =
+1 - [Monthly Churn Rate]
+
+
+-- =========================
+-- Participações / Rankings
+-- =========================
+
+% of Revenue =
+DIVIDE (
+    [Revenue Received],
+    CALCULATE ( [Revenue Received], ALLSELECTED () )
+)
+
+% of MRR =
+DIVIDE (
+    [MRR Current],
+    CALCULATE ( [MRR Current], ALLSELECTED ( 'dim_customer' ) )
+)
+
+Customer Rank by MRR =
+RANKX (
+    ALLSELECTED ( 'dim_customer'[company_name] ),
+    [MRR Current],
+    ,
+    DESC,
+    Dense
+)
+
+
+-- =========================
+-- Uso / Engajamento
+-- =========================
+
+Total Events =
+COUNTROWS ( 'fact_event' )
+
+Total Logins =
+SUM ( 'fact_usage'[logins] )
+
+Avg Engagement Score =
+AVERAGE ( 'fact_usage'[engagement_score] )
+
+Avg Features Used =
+AVERAGE ( 'fact_usage'[features_used] )
+
+Avg Active Days =
+AVERAGE ( 'fact_usage'[active_days] )
+
+
+-- =========================
+-- Data Quality
+-- =========================
+
+DQ Negative Payments =
+COUNTROWS (
+    FILTER (
+        'fact_payment',
+        'fact_payment'[amount] < 0
+    )
+)
+
+DQ Paid Without Paid Date =
+COUNTROWS (
+    FILTER (
+        'fact_payment',
+        'fact_payment'[payment_status] = "Paid"
+            && ISBLANK ( 'fact_payment'[paid_at] )
+    )
+)
+
+DQ Invalid Cancel Date =
+COUNTROWS (
+    FILTER (
+        'fact_subscription',
+        NOT ISBLANK ( 'fact_subscription'[cancel_date] )
+            && 'fact_subscription'[cancel_date] < 'fact_subscription'[start_date]
+    )
+)
