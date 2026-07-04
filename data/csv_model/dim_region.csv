@@ -1,0 +1,12 @@
+region_id,city,macro_region
+SP,São Paulo,Sudeste
+RJ,Rio de Janeiro,Sudeste
+MG,Belo Horizonte,Sudeste
+PR,Curitiba,Sul
+SC,Florianópolis,Sul
+RS,Porto Alegre,Sul
+BA,Salvador,Nordeste
+PE,Recife,Nordeste
+CE,Fortaleza,Nordeste
+GO,Goiânia,Centro-Oeste
+DF,Brasília,Centro-Oeste

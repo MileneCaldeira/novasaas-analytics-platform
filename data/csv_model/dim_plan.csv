@@ -1,0 +1,5 @@
+plan_id,plan_name,plan_segment,monthly_price,user_limit,feature_limit
+1,Starter,SMB,99.9,5,1
+2,Growth,SMB,249.9,15,2
+3,Scale,Mid Market,599.9,50,4
+4,Enterprise,Enterprise,1499.9,999,8
