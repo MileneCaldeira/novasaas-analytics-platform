@@ -1,0 +1,7 @@
+metric,expected_value,format,comparison,business_rule
+Revenue (Received),41897146.17,BRL,168.43% vs 2024,SUM fact_payment[amount] where status = Paid
+MRR (Current),3429176.79,BRL,4.20% vs prior month,SUM net_monthly_price for subscriptions active at latest selected month end
+ARR (Run Rate),41150121.48,BRL,MRR x 12,[MRR Current] * 12
+Active Customers,8708,count,3.81% vs prior month,DISTINCTCOUNT customers active at latest selected month end
+Churn Rate (Monthly),0.012994754411063424,percent,-0.16 pp vs prior month,Cancellations in latest month / active customers at previous month end
+ARPU (Monthly),393.8,BRL,0.37% vs prior month,[MRR Current] / [Active Customers]

@@ -1,0 +1,88 @@
+{
+  "default_filter": "Jan/2024 - Dec/2025",
+  "latest_month": "2025-12-01",
+  "executive_kpis": {
+    "Revenue Received": "R$ 41,90 mi",
+    "MRR Current": "R$ 3,43 mi",
+    "ARR Run Rate": "R$ 41,15 mi",
+    "Active Customers": "8.708",
+    "Monthly Churn Rate": "1,30%",
+    "ARPU": "R$ 393,80"
+  },
+  "charts": {
+    "revenue_by_plan": [
+      {
+        "plan": "Enterprise",
+        "revenue": 16052235.04,
+        "share": 0.3831343303161305
+      },
+      {
+        "plan": "Scale",
+        "revenue": 13843881.52,
+        "share": 0.3304254056786532
+      },
+      {
+        "plan": "Growth",
+        "revenue": 8630189.19,
+        "share": 0.20598513213722483
+      },
+      {
+        "plan": "Starter",
+        "revenue": 3370840.42,
+        "share": 0.08045513186799468
+      }
+    ],
+    "revenue_by_region": [
+      {
+        "region": "Sudeste",
+        "revenue": 19409156.11,
+        "share": 0.4632572354987189
+      },
+      {
+        "region": "Sul",
+        "revenue": 9377209.44,
+        "share": 0.22381499212264935
+      },
+      {
+        "region": "Nordeste",
+        "revenue": 8083570.92,
+        "share": 0.19293846142170293
+      },
+      {
+        "region": "Centro-Oeste",
+        "revenue": 5027209.7,
+        "share": 0.11998931095692839
+      }
+    ],
+    "plan_performance": [
+      {
+        "plan": "Enterprise",
+        "active_customers": 938,
+        "mrr": 1326661.25,
+        "revenue": 16052235.04,
+        "churn_rate": 0.0011173184357541898
+      },
+      {
+        "plan": "Scale",
+        "active_customers": 1986,
+        "mrr": 1129640.89,
+        "revenue": 13843881.52,
+        "churn_rate": 0.007306889352818371
+      },
+      {
+        "plan": "Growth",
+        "active_customers": 2987,
+        "mrr": 708115.63,
+        "revenue": 8630189.19,
+        "churn_rate": 0.013942140118508192
+      },
+      {
+        "plan": "Starter",
+        "active_customers": 2797,
+        "mrr": 264759.02,
+        "revenue": 3370840.42,
+        "churn_rate": 0.019940915805022157
+      }
+    ]
+  }
+}
