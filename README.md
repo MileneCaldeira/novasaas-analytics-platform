@@ -1,125 +1,68 @@
 NovaSaaS Analytics Platform
-Projeto de Business Intelligence para acompanhamento de receita, operação, churn e retenção de uma empresa SaaS fictícia.
-A proposta foi construir um case de ponta a ponta, simulando uma entrega real de BI: dados estruturados, modelo analítico, medidas DAX, validações e dashboards executivos.
----
-Contexto
-Empresas SaaS precisam acompanhar mais do que receita total.  
-Para entender se o crescimento é saudável, é necessário olhar para:
-receita recorrente;
-evolução de MRR;
-clientes ativos;
-churn;
-retenção;
-desempenho operacional;
-clientes em risco;
-planos e regiões com maior impacto no resultado.
-Este projeto organiza esses indicadores em três visões principais.
----
-Dashboards
-1. Visão Executiva
-Página voltada para leitura rápida dos principais indicadores do negócio.
-![Visão Executiva](images/01_visao_executiva.png)
-Indicadores e análises:
-Receita recebida;
-MRR atual;
-ARR;
-clientes ativos;
-churn mensal;
-ARPU;
-receita por plano;
-receita por região;
-principais clientes por MRR.
----
-2. Analytics Operacional
-Página focada em monitoramento de execução e performance dos processos.
-![Analytics Operacional](images/02_analytics_operacional.png)
-Indicadores e análises:
-volume de transações;
-taxa de sucesso;
-tempo médio de ciclo;
-backlog;
-exceções;
-distribuição por status;
-ranking de unidades;
-registros detalhados.
----
-3. Churn e Retenção
-Página voltada para análise de perda de clientes, retenção e priorização de ações.
-![Churn e Retenção](images/03_churn_retencao.png)
-Indicadores e análises:
-clientes totais;
-novos clientes;
-clientes perdidos;
-taxa de churn;
-taxa de retenção;
-MRR em risco;
-comparação por segmento;
-clientes com maior risco;
-sugestões de ação.
----
-Estrutura do projeto
+Business Intelligence para uma empresa SaaS fictícia, com foco em receita, operação, churn e retenção.
+O projeto simula uma entrega real de BI: dados modelados, medidas DAX, validações e dashboards executivos construídos para apoiar decisão de negócio.
+<br>
+Dashboard
+Visão Executiva
+<img src="images/01_visao_executiva.png" alt="Dashboard Visão Executiva" width="100%">
+<br>
+Analytics Operacional
+<img src="images/02_analytics_operacional.png" alt="Dashboard Analytics Operacional" width="100%">
+<br>
+Churn & Retenção
+<img src="images/03_churn_retencao.png" alt="Dashboard Churn e Retenção" width="100%">
+<br>
+Objetivo
+Acompanhar a saúde de uma operação SaaS a partir de três frentes:
+Frente	Pergunta de negócio
+Receita	A empresa está crescendo de forma sustentável?
+Operação	A execução está saudável ou existem gargalos?
+Retenção	Quais clientes e segmentos precisam de atenção?
+<br>
+Principais indicadores
+Categoria	Indicadores
+Receita	Receita recebida, MRR, ARR, ARPU
+Clientes	Clientes ativos, novos clientes, clientes perdidos
+Churn	Taxa de churn, taxa de retenção, MRR em risco
+Operação	Transações, taxa de sucesso, backlog, exceções
+<br>
+Modelo de dados
+O projeto foi estruturado em um modelo analítico com dimensões e fatos.
+```bash
+data/
+├── csv_model/
+│   ├── dim_customer.csv
+│   ├── dim_date.csv
+│   ├── dim_empresa.csv
+│   ├── dim_plan.csv
+│   ├── dim_product.csv
+│   ├── dim_region.csv
+│   ├── dim_seller.csv
+│   ├── fact_event.csv
+│   ├── fact_payment.csv
+│   ├── fact_subscription.csv
+│   └── fact_usage.csv
+│
+└── excel/
+    └── NovaSaaS_PowerBI_Dashboard_Data.xlsx
+```
+<br>
+Estrutura do repositório
 ```bash
 .
-├── data/
-│   ├── csv_model/
-│   └── excel/
-├── dax/
-├── images/
-├── qa/
+├── data/       # Dados usados no projeto
+├── dax/        # Medidas DAX
+├── images/     # Prints finais do dashboard
+├── qa/         # Resultados esperados e validações
 └── README.md
 ```
-`data/csv_model`
-Tabelas utilizadas para montar o modelo no Power BI.
-Inclui dimensões e fatos, como:
-clientes;
-datas;
-empresas;
-planos;
-produtos;
-regiões;
-vendedores;
-pagamentos;
-assinaturas;
-eventos;
-uso da plataforma.
-`dax`
-Arquivo com as medidas utilizadas no dashboard.
-`qa`
-Arquivos com resultados esperados para conferência dos KPIs e visuais.
-`images`
-Prints finais das páginas do dashboard.
----
-Modelo de dados
-O projeto foi organizado em uma estrutura próxima de um modelo estrela.
-Dimensões principais:
-Tabela	Descrição
-`dim_customer`	Dados dos clientes
-`dim_empresa`	Informações das empresas
-`dim_date`	Calendário analítico
-`dim_plan`	Planos comerciais
-`dim_product`	Produtos e funcionalidades
-`dim_region`	Regiões
-`dim_seller`	Vendedores
-Fatos principais:
-Tabela	Descrição
-`fact_payment`	Pagamentos e receita
-`fact_subscription`	Assinaturas e cancelamentos
-`fact_usage`	Uso da plataforma
-`fact_event`	Eventos operacionais
----
-Principais métricas
-Algumas das medidas utilizadas no projeto:
-Métrica	Descrição
-Receita Recebida	Soma dos pagamentos confirmados
-MRR Atual	Receita recorrente mensal da base ativa
-ARR	MRR anualizado
-Clientes Ativos	Clientes ativos no período
-Churn Mensal	Clientes perdidos sobre base anterior
-ARPU	Receita média por cliente
-MRR em Risco	Receita associada a clientes com maior risco de churn
-Taxa de Sucesso	Percentual de eventos concluídos com sucesso
----
-Exemplos de DAX
+<br>
+Medidas DAX
+As medidas utilizadas no dashboard estão em:
+```bash
+dax/NovaSaaS_DAX_Measures.dax
+```
+Exemplo:
 ```DAX
 Revenue Received =
 CALCULATE (
@@ -131,59 +74,33 @@ CALCULATE (
 ARR Run Rate =
 [MRR Current] * 12
 ```
-```DAX
-ARPU =
-DIVIDE (
-    [MRR Current],
-    [Active Customers]
-)
-```
----
+<br>
 Validações
-Para reduzir risco de inconsistência, o projeto inclui arquivos de validação na pasta `qa`.
-Alguns pontos conferidos:
-total dos principais KPIs;
-receita por plano;
-receita por região;
+A pasta `qa/` contém arquivos de conferência para validar se os números do Power BI estão corretos.
+Foram considerados pontos como:
+receita apenas com pagamentos confirmados;
+conferência dos principais KPIs;
 evolução mensal de MRR;
+receita por plano e região;
 performance por plano;
 clientes no ranking;
-status de pagamento;
-checks de qualidade dos dados.
-Exemplos de riscos considerados:
-duplicidade de clientes;
-pagamentos negativos;
-clientes sem assinatura;
-relacionamento incorreto entre fatos e dimensões;
-uso de status de pagamento errado para calcular receita;
-cálculo de churn usando base incorreta.
----
+consistência de status e relacionamentos.
+<br>
 Resultados esperados
-Alguns números utilizados como referência para validação:
-Indicador	Valor esperado
+Indicador	Valor
 Receita Recebida	R$ 41,9 mi
 MRR Atual	R$ 3,4 mi
 ARR	R$ 41,1 mi
 Clientes Ativos	8.708
 Churn Mensal	1,30%
 ARPU	R$ 393,80
----
-Principais aprendizados
-Este projeto reforça pontos importantes em uma entrega de BI:
-separar métrica financeira de métrica operacional;
-validar granularidade antes de criar medidas;
-evitar relacionamento muitos-para-muitos sem necessidade;
-conferir os KPIs com bases auxiliares;
-documentar regra de negócio;
-construir dashboards com foco em decisão, não apenas visual.
----
-Ferramentas utilizadas
+<br>
+Ferramentas
 Power BI
 DAX
-CSV
 Excel
-Markdown
+CSV
 GitHub
----
-Observação
-Os dados são fictícios e foram estruturados para simular um cenário realista de uma empresa SaaS.
+<br>
+Sobre
+Projeto fictício criado para portfólio, simulando uma entrega de BI para uma empresa SaaS.
